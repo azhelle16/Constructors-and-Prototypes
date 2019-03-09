@@ -10,7 +10,7 @@ Then create a square object from the rectangle constructor and call its area and
 
 # constructor-2.js
 
-For the second part of the game, we are two create the following constructors: Human, Survivor and Monster
+For the second part of the homework, we are to create the following constructors: Human, Survivor and Monster
 
 The survivor constructor has an "escape" function where:
 
