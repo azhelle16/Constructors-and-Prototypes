@@ -2,6 +2,7 @@
 
 var inquirer = require("inquirer")
 var uname
+
 //HUMAN CONSTRUCTOR
 function human(name,health) {
 
@@ -24,7 +25,7 @@ survivor.prototype = Object.create(human.prototype)
 
 survivor.prototype.escape = function(ln) {
 
-	if (ln == this.luckyNum) {
+	if (ln == this.lucky_number) {
 		return true
 	} else {
 		return false	
@@ -33,13 +34,14 @@ survivor.prototype.escape = function(ln) {
 }
 
 //MONSTER CONSTRUCTOR
-function monster(attack) {
+function monster(n,h,attack) {
 
 	this.attacks = attack
+  human.call(this,n,h)
 
 }
 
-//MONSTER - SURVIVOR CONSTRUCTOR CONNECTION
+//MONSTER - HUMAN CONSTRUCTOR CONNECTION
 monster.prototype = Object.create(human.prototype)
 
 monster.prototype.attack = function() {
