@@ -27,6 +27,8 @@ if the attack function returns a number
 	if the attack function returns false then
 		console log you've dodged the monster's attack!
 
+The user will be asked to continue until the health is less than or equal to 0.
+
 ### Must Haves for the constructor-2.js
 
 inquirer package (npm i inquirer)

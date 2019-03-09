@@ -1,12 +1,13 @@
 //PACKAGE
 
 var inquirer = require("inquirer")
-
+var uname
 //HUMAN CONSTRUCTOR
 function human(name,health) {
 
 	this.name = name;
 	this.health = health;
+  uname = name;
 
 }
 
@@ -88,21 +89,12 @@ inquirer
   		if (inquirerResponse.confirm) {
 
           var s = new survivor(inquirerResponse.username, 75)
-          var esc = s.escape(inquirerResponse.number)
           var m  = new monster(20)
 
-          if (esc == true) {
-            console.log("\nYou won the game!")
-          } else {
-              var ma = m.attack()
+          playGame(s,m,inquirerResponse)
 
-              if (ma == false) {
-                console.log("\nYou've dodged the attack!\n")
-              } else {
-                  s.health -= ma
-                  console.log("\nYou've lost "+ma+" health and now you have a total of this much health: "+s.health+"\n")
-                }
-            }
+          
+
 
   		} else {
 
@@ -111,3 +103,68 @@ inquirer
   		  }
 
   });
+
+function playGame(s,m,ir) {
+
+  var esc = s.escape(ir.number)
+  if (esc == true) {
+    console.log("\nYou won the game!");
+  } else {
+      var ma = m.attack()
+
+      if (ma == false) {
+        console.log("\nYou've dodged the attack!\n")
+      } else {
+          s.health -= ma
+          console.log("\nYou've lost "+ma+" health and now you have a total of this much health: "+s.health+"\n")
+        }
+    }
+
+  if (s.health > 0) {   
+      inquirer
+        .prompt([
+        // Here we ask the user to confirm.
+        {
+          type: "confirm",
+          message: "Do you want to proceed?",
+          name: "confirm",
+          default: true,
+        }
+      ])
+      .then(function(inqResponse) {
+          
+          if (inqResponse.confirm) {
+              inquirer
+                .prompt(
+                //Lucky Number
+                {
+                  type: "input",
+                  message: "Guess a number from 1 to 30:",
+                  name: "number",
+                  validate: function(number) {
+
+                    if (number >= 1 && number <= 30) {
+                      return true
+                    }
+
+                  }
+                })
+                .then(function(inr) {
+
+                    playGame(s,m,inr)
+
+                });  
+
+          } else {
+
+              console.log("\nThat's alright, "+uname+". We'll play next time.\n") 
+
+            }
+
+      });
+  } else {
+
+      console.log("Current Health: "+s.health+". You don't have enough health to play. Thank you and goodbye.\n")
+
+    }
+}
