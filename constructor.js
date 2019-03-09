@@ -25,9 +25,6 @@ function shape(name, numSides) {
 //RECTANGLE CONSTRUCTOR
 function rec(h,w,name,ns) {
 	
-	if (w != h) 
-		h = w
-
 	this.height = h;
 	this.width = w;
 	shape.call(this,name,ns)
@@ -46,9 +43,21 @@ rec.prototype.perimeter = function() {
 	return 2*(this.width + this.height)
 }
 
-var square = new rec(40,40,"SQ1",4)
-var sqr = new rec(20,60,"SQ2",4)
+//SQUARE CONSTRUCTOR
+function square(h,w,n,s) {
 
-console.log("\nSQUARE1 is called "+square.name+" and it has "+square.numSides+" sides. It has a height of "+square.height+" and a width of "+square.width+". It has an area of "+square.area()+" and a perimeter of "+square.perimeter()+".\n")
+	if (w != h) 
+		h = w
+
+	rec.call(this,h,w,n,s)
+
+}
+
+square.prototype = Object.create(rec.prototype);
+
+var rect = new rec(4,40,"RECT1",4)
+var sqr = new square(20,60,"SQ1",4)
+
+console.log("\nRECTANGLE1 is called "+rect.name+" and it has "+rect.numSides+" sides. It has a height of "+rect.height+" and a width of "+rect.width+". It has an area of "+rect.area()+" and a perimeter of "+rect.perimeter()+".\n")
 
 console.log("\nSQUARE2 is called "+sqr.name+" and it has "+sqr.numSides+" sides. It has a height of "+sqr.height+" and a width of "+sqr.width+". It has an area of "+sqr.area()+" and a perimeter of "+sqr.perimeter()+".\n")
