@@ -8,7 +8,6 @@ function human(name,health) {
 
 	this.name = name;
 	this.health = health;
-  uname = name;
 
 }
 
@@ -23,13 +22,34 @@ function survivor(n,h) {
 //HUMAN - SURVIVOR CONSTRUCTOR CONNECTION
 survivor.prototype = Object.create(human.prototype)
 
-survivor.prototype.escape = function(ln) {
+//SURVIVOR ESCAPE FUNCTION
+survivor.prototype.escape = function() {
 
-	if (ln == this.lucky_number) {
-		return true
-	} else {
-		return false	
-	  }
+  return inquirer
+    .prompt([
+      //Lucky Number
+      {
+        type: "input",
+        message: "Guess a number from 1 to 30:",
+        name: "number",
+        validate: function(number) {
+
+          if (number >= 1 && number <= 30) {
+            return true
+          }
+
+        }
+      }  
+
+    ]).then(function(inq) {
+
+        if (inq.number == this.lucky_number) {
+          return true
+        } else {
+            return false  
+          }
+
+    });
 
 }
 
@@ -62,41 +82,24 @@ inquirer
     // Here we create a basic text prompt.
     {
       type: "input",
-      message: "Hi There! What is your name?",
+      message: "\nHi There! What is your name?",
       name: "username"
-    },
-    //Lucky Number
-    {
-      type: "input",
-      message: "Guess a number from 1 to 30:",
-      name: "number",
-      validate: function(number) {
-
-        if (number >= 1 && number <= 30) {
-          return true
-        }
-
-      }
     },
     // Here we ask the user to confirm.
     {
       type: "confirm",
-      message: "Do you want to proceed?",
+      message: "Do you want to start to play?",
       name: "confirm",
-      default: true
-    }
-  ])
-  .then(function(inquirerResponse) {
+      default: true,
+    }    
+  ]).then(function(inquirerResponse) {
   		
   		if (inquirerResponse.confirm) {
 
           var s = new survivor(inquirerResponse.username, 75)
-          var m  = new monster(20)
+          var m  = new monster("serena",100,20)
 
-          playGame(s,m,inquirerResponse)
-
-          
-
+          playGame(s,m)
 
   		} else {
 
@@ -106,67 +109,51 @@ inquirer
 
   });
 
-function playGame(s,m,ir) {
+function playGame(s,m) {
 
-  var esc = s.escape(ir.number)
-  if (esc == true) {
-    console.log("\nYou won the game!");
-  } else {
-      var ma = m.attack()
-
-      if (ma == false) {
-        console.log("\nYou've dodged the attack!\n")
+  s.escape().then(function(esc) {
+      if (esc == true) {
+        console.log("\nYou won the game!");
       } else {
-          s.health -= ma
-          console.log("\nYou've lost "+ma+" health and now you have a total of this much health: "+s.health+"\n")
-        }
-    }
+          var ma = m.attack()
 
-  if (s.health > 0) {   
-      inquirer
-        .prompt([
-        // Here we ask the user to confirm.
-        {
-          type: "confirm",
-          message: "Do you want to proceed?",
-          name: "confirm",
-          default: true,
-        }
-      ])
-      .then(function(inqResponse) {
-          
-          if (inqResponse.confirm) {
-              inquirer
-                .prompt(
-                //Lucky Number
-                {
-                  type: "input",
-                  message: "Guess a number from 1 to 30:",
-                  name: "number",
-                  validate: function(number) {
-
-                    if (number >= 1 && number <= 30) {
-                      return true
-                    }
-
-                  }
-                })
-                .then(function(inr) {
-
-                    playGame(s,m,inr)
-
-                });  
-
+          if (ma == false) {
+            console.log("\nYou've dodged the attack!\n")
           } else {
-
-              console.log("\nThat's alright, "+uname+". We'll play next time.\n") 
-
+              s.health -= ma
+              console.log("\nYou've lost "+ma+" health and now you have a total of this much health: "+s.health+"\n")
             }
+        }
+  }).then(function(esc) {      
 
-      });
-  } else {
+      if (s.health > 0) {   
+          inquirer
+            .prompt([
+            // Here we ask the user to confirm.
+            {
+              type: "confirm",
+              message: "Do you want to continue to play?",
+              name: "confirm",
+              default: true,
+            }
+          ])
+          .then(function(inqResponse) {
+              
+              if (inqResponse.confirm) {
+                  
+                  playGame(s,m)
+              
+              } else {
 
-      console.log("Current Health: "+s.health+". You don't have enough health to play. Thank you and goodbye.\n")
+                  console.log("\nThat's alright, "+s.name+". We'll play next time.\n") 
 
-    }
+                }
+
+          });
+      } else {
+
+          console.log("Current Health: "+s.health+". You don't have enough health to play. Monster "+m.name+" got you. Thank you and goodbye.\n")
+
+        }
+  })
 }
